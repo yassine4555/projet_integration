@@ -1,0 +1,36 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: docker-build
+spec:
+  params:
+    - name: IMAGE_NAME
+      type: string
+      default: "gateway"
+    - name: IMAGE_TAG
+      type: string
+      default: "latest"
+    - name: CONTEXT_PATH
+      type: string
+      default: "Gateway"
+  steps:
+    - name: build
+      image: docker:24-dind
+      script: |
+        #!/bin/sh
+        set -e
+        echo "Building Docker image: $(params.IMAGE_NAME):$(params.IMAGE_TAG)"
+        docker build -t $(params.IMAGE_NAME):$(params.IMAGE_TAG) /workspace/$(params.CONTEXT_PATH)
+        echo "Build completed successfully"
+      volumeMounts:
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
+        - name: source
+          mountPath: /workspace
+  volumes:
+    - name: docker-socket
+      hostPath:
+        path: /var/run/docker.sock
+    - name: source
+      hostPath:
+        path: /d/iset/3eme/S1/integration/projet/work/server

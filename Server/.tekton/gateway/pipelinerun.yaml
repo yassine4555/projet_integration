@@ -1,0 +1,12 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: gateway-run-
+spec:
+  pipelineRef:
+    name: gateway-pipeline
+  params:
+    - name: image-name
+      value: "gateway"
+    - name: image-tag
+      value: "latest"

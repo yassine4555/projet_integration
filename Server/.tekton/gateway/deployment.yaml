@@ -1,0 +1,31 @@
+# This is a reference copy of the gateway deployment
+# The actual deployment is in k8s/deploy-gatway.yaml
+# This file is here for documentation purposes
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - name: gateway
+        image: gateway:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 7050
+        env:
+        - name: AUTH_SERVER
+          value: "auth-service:5000"
+        - name: SAVING_server
+          value: "saving-service:6000"
+        - name: UserServices_server
+          value: "user-service:8000"

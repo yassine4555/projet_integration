@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POST Request Button</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #response {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>POST Request Example</h1>
+        <p>Click the button to send a POST request</p>
+        <button id="postButton">Send POST Request</button>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        document.getElementById('postButton').addEventListener('click', function() {
+            const url = 'http://192.168.100.183:7053/room/4d11f46c-900c-421f-b74b-84897b6097d6'; // Your URL
+            
+            // Create a form dynamically
+            
+            // Add any data you want to send as hidden inputs
+            const data = {
+                // Add your POST data here if needed
+                // key1: 'value1',
+                // key2: 'value2'
+				user_email : 'test@tes.cl'
+            };
+            
+            // Create hidden input fields for each data item
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = url;
+            form.target = '_blank'; // Opens in new tab, use '_self' for same window
+            
+            // Create a hidden input with JSON data
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'json_data';
+            input.value = JSON.stringify(data);
+            form.appendChild(input);
+            
+            // Append form to body and submit
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+            
+            // Append form to body and submit
+            document.body.appendChild(form);
+            form.submit();
+        });
+    </script>
+</body>
+</html>

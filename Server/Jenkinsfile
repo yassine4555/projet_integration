@@ -1,0 +1,121 @@
+pipeline {
+    agent any
+
+    environment {
+        // Set environment variables for testing
+        TESTING = 'true'
+        PYTHONPATH = "${WORKSPACE}/Server"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    dir('Server') {
+                        sh '''
+                            if command -v python3 &> /dev/null; then
+                                PYTHON_CMD=python3
+                                PIP_CMD=pip3
+                            elif command -v python &> /dev/null; then
+                                PYTHON_CMD=python
+                                PIP_CMD=pip
+                            else
+                                echo "Error: Python is not installed"
+                                exit 1
+                            fi
+                            
+                            echo "Using Python: $PYTHON_CMD"
+                            $PYTHON_CMD --version
+                            
+                            echo "Installing test dependencies..."
+                            $PIP_CMD install pytest requests python-dotenv --user
+                            
+                            # Install dependencies from each service
+                            for service in authService Gateway userServices dataService; do
+                                if [ -f "$service/requirements.txt" ]; then
+                                    echo "Installing dependencies for $service..."
+                                    $PIP_CMD install -r "$service/requirements.txt" --user || true
+                                fi
+                            done
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Tests Unitaires') {
+            steps {
+                script {
+                    dir('Server') {
+                        sh '''
+                            if command -v python3 &> /dev/null; then
+                                PYTHON_CMD=python3
+                            else
+                                PYTHON_CMD=python
+                            fi
+                            
+                            echo "Running Unit Tests..."
+                            $PYTHON_CMD tests/test_unit.py
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage("Tests d'Intégration (API)") {
+            steps {
+                script {
+                    dir('Server') {
+                        sh '''
+                            if command -v python3 &> /dev/null; then
+                                PYTHON_CMD=python3
+                            else
+                                PYTHON_CMD=python
+                            fi
+                            
+                            echo "Running Integration Tests..."
+                            $PYTHON_CMD tests/test_integration.py
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Contract Tests') {
+            steps {
+                script {
+                    dir('Server') {
+                        sh '''
+                            if command -v python3 &> /dev/null; then
+                                PYTHON_CMD=python3
+                            else
+                                PYTHON_CMD=python
+                            fi
+                            
+                            echo "Running Contract Tests..."
+                            $PYTHON_CMD tests/test_contract.py
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Server Pipeline finished'
+        }
+        success {
+            echo '✅ All Server tests passed!'
+        }
+        failure {
+            echo '❌ Server tests failed!'
+        }
+    }
+}

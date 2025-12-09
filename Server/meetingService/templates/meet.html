@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Join or Create Meet</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 50px;
+    }
+    .container {
+      display: flex;
+      justify-content: space-around;
+      width: 80%;
+      gap: 50px;
+    }
+    .box {
+      padding: 30px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      width: 40%;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input {
+      display: block;
+      width: 90%;
+      padding: 10px;
+      margin: 15px auto;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Meet Room</h1>
+  <div class="container">
+    <!-- Create Meet -->
+    <div class="box">
+      <h2>Create a Meet</h2>
+      <form action="/create-meet" method="POST">
+          <input type="text" name="meet_id" placeholder="Meet ID" >
+          <input type="password" name="password" placeholder="Password" required>
+          <input type="text" name="meet_name" placeholder="meetName" required>
+          <input type="text" name="meet_title" placeholder="meet_title" required>
+          <input type="text" name="meet_time" placeholder="Password" required>
+          <input type="text" name="meet_type" placeholder="Password" required>
+          <input type="text" name="meet_status" placeholder="Password" required>
+          <input type="date" name="meet_date" placeholder="Password" required>
+        <button type="submit">Create</button>
+      </form>
+    </div>
+
+    <!-- Join Meet -->
+    <div class="box">
+      <h2>Join a Meet</h2>
+      <form action="/join-meet" method="POST">
+        <input type="text" name="meet_id" placeholder="Meet ID" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Join</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

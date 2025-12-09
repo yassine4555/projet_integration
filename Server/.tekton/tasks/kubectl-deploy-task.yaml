@@ -1,0 +1,40 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: kubectl-deploy
+spec:
+  params:
+    - name: MANIFEST_PATH
+      type: string
+      default: "k8s/deploy-gatway.yaml"
+    - name: DEPLOYMENT_NAME
+      type: string
+      default: "gateway"
+  steps:
+    - name: deploy
+      image: bitnami/kubectl:latest
+      script: |
+        #!/bin/bash
+        set -e
+        
+        echo "Applying Kubernetes manifests..."
+        kubectl apply -f /workspace/$(params.MANIFEST_PATH)
+        
+        echo "Restarting deployment..."
+        kubectl rollout restart deployment/$(params.DEPLOYMENT_NAME)
+        
+        echo "Waiting for rollout to complete..."
+        kubectl rollout status deployment/$(params.DEPLOYMENT_NAME) --timeout=120s
+        
+        echo "Deployment status:"
+        kubectl get pods -l app=$(params.DEPLOYMENT_NAME)
+        kubectl get svc $(params.DEPLOYMENT_NAME)
+        
+        echo "✅ Deployment completed successfully"
+      volumeMounts:
+        - name: source
+          mountPath: /workspace
+  volumes:
+    - name: source
+      hostPath:
+        path: /d/iset/3eme/S1/integration/projet/work/server
